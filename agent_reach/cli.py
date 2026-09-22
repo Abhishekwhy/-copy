@@ -476,9 +476,44 @@ def _cmd_install(args):
         print("Dry run complete. No changes were made.")
 
 
+def _skill_source_dir():
+    """Locate the skill package (SKILL.md, SKILL_en.md, references/).
+
+    The canonical copy lives at the repo root in ``skills/agent-reach`` so that
+    git-based skill installers find it under the conventional
+    ``skills/<name>/SKILL.md`` layout. Wheels re-publish the same files at
+    ``agent_reach/skill`` (see the force-include in pyproject.toml), which is
+    what installed users get; editable installs and plain source checkouts only
+    have the repo-root copy, so try both.
+    """
+    import importlib.resources
+    from pathlib import Path
+
+    candidates = []
+    try:
+        candidates.append(importlib.resources.files("agent_reach").joinpath("skill"))
+    except Exception:
+        pass
+
+    here = Path(__file__).resolve().parent
+    candidates.append(here / "skill")
+    candidates.append(here.parent / "skills" / "agent-reach")
+
+    for candidate in candidates:
+        try:
+            if candidate.joinpath("SKILL.md").is_file():
+                return candidate
+        except Exception:
+            continue
+
+    raise FileNotFoundError(
+        "Could not locate Agent Reach skill files (SKILL.md). "
+        "Reinstall agent-reach or check out the repository."
+    )
+
+
 def _install_skill(force: bool = True):
     """Install Agent Reach as an agent skill for supported agent clients."""
-    import importlib.resources
     import os
     import shutil
 
@@ -518,14 +553,9 @@ def _install_skill(force: bool = True):
                 shutil.rmtree(target)
             os.makedirs(target, exist_ok=True)
 
-            # Get skill directory from package (with fallback for editable installs)
-            try:
-                skill_pkg = importlib.resources.files("agent_reach").joinpath("skill")
-                skill_md = _read_skill_markdown(skill_pkg)
-            except Exception:
-                from pathlib import Path
-                skill_pkg = Path(__file__).resolve().parent / "skill"
-                skill_md = _read_skill_markdown(skill_pkg)
+            # Get skill directory (wheel resource, or repo-root source checkout)
+            skill_pkg = _skill_source_dir()
+            skill_md = _read_skill_markdown(skill_pkg)
 
             # Copy SKILL.md using the selected locale file
             with open(os.path.join(target, "SKILL.md"), "w", encoding="utf-8") as f:

@@ -8,6 +8,25 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### 📦 Packaging / 打包
+
+#### skill 包移到仓库根目录 `skills/agent-reach/`
+
+- **动机：** git 仓库型 skill 安装器（`npx skill` / `npx skills`）按约定去找
+  `skills/<name>/SKILL.md`。原来 skill 文件只存在于 Python 包内部的
+  `agent_reach/skill/`，单数 `skill` CLI 找不到。
+- **变更：** `agent_reach/skill/` → `skills/agent-reach/`（仓库根目录，唯一真源）。
+  `pyproject.toml` 增加 `[tool.hatch.build.targets.wheel.force-include]`，把同一份文件
+  打进 wheel 的 `agent_reach/skill/`，**已安装用户的 `importlib.resources` 路径不变**。
+- **新增：** `agent_reach.cli._skill_source_dir()` 依次尝试 wheel 资源目录、
+  包内旧路径、仓库根 `skills/agent-reach/`，因此 wheel 安装和 editable/源码 checkout
+  下 `agent-reach skill --install` 行为一致。
+- **安装方式：**
+  ```bash
+  npx skills add https://github.com/Panniantong/Agent-Reach.git
+  SKILL_BASE_URL=https://github.com/Panniantong/Agent-Reach/tree/main npx skill skills/agent-reach
+  ```
+
 ### 🐛 Bug Fixes / 修复
 
 #### 🔐 Boss直聘 — 登录态误判（双凭据存储）

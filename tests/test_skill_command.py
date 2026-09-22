@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Tests for 'agent-reach skill' command and _install_skill / _uninstall_skill."""
 
-import importlib.resources
 import os
 import re
 import tempfile
@@ -10,15 +9,28 @@ from argparse import Namespace
 from pathlib import Path
 from unittest.mock import patch
 
-from agent_reach.cli import _cmd_skill, _install_skill, _uninstall_skill
+from agent_reach.cli import (
+    _cmd_skill,
+    _install_skill,
+    _skill_source_dir,
+    _uninstall_skill,
+)
 
 
 class TestSkillCommand(unittest.TestCase):
     """Test skill install and uninstall via CLI helpers."""
 
+    def test_skill_package_lives_under_repo_root_skills_dir(self):
+        """`npx skill skills/agent-reach` needs skills/<name>/SKILL.md at the repo root."""
+        root = Path(__file__).resolve().parents[1]
+        skill_dir = root / "skills" / "agent-reach"
+
+        self.assertTrue((skill_dir / "SKILL.md").is_file())
+        self.assertTrue((skill_dir / "references").is_dir())
+
     def test_skill_resources_include_both_locales(self):
-        """Package resources should expose both default and English skill markdown files."""
-        skill_dir = importlib.resources.files("agent_reach").joinpath("skill")
+        """Skill resources should expose both default and English skill markdown files."""
+        skill_dir = _skill_source_dir()
 
         default_skill = skill_dir.joinpath("SKILL.md").read_text(encoding="utf-8")
         english_skill = skill_dir.joinpath("SKILL_en.md").read_text(encoding="utf-8")
@@ -29,9 +41,7 @@ class TestSkillCommand(unittest.TestCase):
     def test_exa_reference_uses_default_registered_tools_only(self):
         """Agent instructions must not call Exa tools disabled by default."""
         search_reference = (
-            importlib.resources.files("agent_reach")
-            .joinpath("skill", "references", "search.md")
-            .read_text(encoding="utf-8")
+            _skill_source_dir().joinpath("references", "search.md").read_text(encoding="utf-8")
         )
 
         self.assertIn("web_search_exa", search_reference)
@@ -42,7 +52,7 @@ class TestSkillCommand(unittest.TestCase):
         """Packaged commands must survive PowerShell and POSIX parsing."""
         root = Path(__file__).resolve().parents[1]
         markdown_files = [
-            *(root / "agent_reach" / "skill").rglob("*.md"),
+            *(root / "skills" / "agent-reach").rglob("*.md"),
             *(root / "agent_reach" / "guides").rglob("*.md"),
             root / "docs" / "install.md",
             root / "docs" / "troubleshooting.md",
@@ -57,9 +67,7 @@ class TestSkillCommand(unittest.TestCase):
     def test_linkedin_reference_uses_current_tool_contract(self):
         """LinkedIn examples should use the current server and parameters."""
         career_reference = (
-            importlib.resources.files("agent_reach")
-            .joinpath("skill", "references", "career.md")
-            .read_text(encoding="utf-8")
+            _skill_source_dir().joinpath("references", "career.md").read_text(encoding="utf-8")
         )
 
         self.assertIn(
@@ -112,11 +120,11 @@ class TestSkillCommand(unittest.TestCase):
     def test_boss_setup_is_agent_driven_and_reproducible(self):
         root = Path(__file__).resolve().parents[1]
         install_doc = (root / "docs" / "install.md").read_text(encoding="utf-8")
-        skill = (root / "agent_reach" / "skill" / "SKILL.md").read_text(
+        skill = (root / "skills" / "agent-reach" / "SKILL.md").read_text(
             encoding="utf-8"
         )
         career = (
-            root / "agent_reach" / "skill" / "references" / "career.md"
+            root / "skills" / "agent-reach" / "references" / "career.md"
         ).read_text(encoding="utf-8")
         readme = (root / "README.md").read_text(encoding="utf-8")
 

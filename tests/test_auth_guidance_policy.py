@@ -13,7 +13,7 @@ def _policy_documents() -> list[Path]:
     for directory in (
         ROOT / "docs",
         ROOT / "agent_reach" / "guides",
-        ROOT / "agent_reach" / "skill",
+        ROOT / "skills" / "agent-reach",
     ):
         documents.extend(directory.rglob("*.md"))
     return sorted(set(documents))
@@ -59,7 +59,7 @@ def test_xiaohongshu_opencli_and_export_boundaries_are_truthful():
     boundary_docs = (
         ROOT / "docs" / "install.md",
         ROOT / "agent_reach" / "guides" / "setup-xiaohongshu.md",
-        ROOT / "agent_reach" / "skill" / "references" / "social.md",
+        ROOT / "skills" / "agent-reach" / "references" / "social.md",
     )
     for path in boundary_docs:
         text = path.read_text(encoding="utf-8")
@@ -82,9 +82,9 @@ def test_twitter_operational_docs_explain_the_environment_boundary():
         ROOT / "docs" / "install.md",
         ROOT / "docs" / "troubleshooting.md",
         ROOT / "agent_reach" / "guides" / "setup-twitter.md",
-        ROOT / "agent_reach" / "skill" / "SKILL.md",
-        ROOT / "agent_reach" / "skill" / "SKILL_en.md",
-        ROOT / "agent_reach" / "skill" / "references" / "social.md",
+        ROOT / "skills" / "agent-reach" / "SKILL.md",
+        ROOT / "skills" / "agent-reach" / "SKILL_en.md",
+        ROOT / "skills" / "agent-reach" / "references" / "social.md",
     )
 
     for path in operational_docs:
@@ -199,8 +199,8 @@ def test_public_guidance_never_puts_secrets_in_process_arguments():
 def test_skill_explains_unverified_backend_state():
     """A null backend is an explicit safety state, not a routing instruction."""
     skills = (
-        ROOT / "agent_reach" / "skill" / "SKILL.md",
-        ROOT / "agent_reach" / "skill" / "SKILL_en.md",
+        ROOT / "skills" / "agent-reach" / "SKILL.md",
+        ROOT / "skills" / "agent-reach" / "SKILL_en.md",
     )
     for path in skills:
         text = path.read_text(encoding="utf-8")
@@ -211,7 +211,7 @@ def test_skill_explains_unverified_backend_state():
 def test_video_reference_has_content_level_youtube_fallbacks():
     """Version-only health must not be presented as proof subtitles work."""
     text = (
-        ROOT / "agent_reach" / "skill" / "references" / "video.md"
+        ROOT / "skills" / "agent-reach" / "references" / "video.md"
     ).read_text(encoding="utf-8")
     assert "opencli youtube transcript" in text
     assert "最多重试 3 次" in text
@@ -220,8 +220,8 @@ def test_video_reference_has_content_level_youtube_fallbacks():
 
 def test_skill_routes_finance_and_documents_opencli_discovery():
     skills = (
-        ROOT / "agent_reach" / "skill" / "SKILL.md",
-        ROOT / "agent_reach" / "skill" / "SKILL_en.md",
+        ROOT / "skills" / "agent-reach" / "SKILL.md",
+        ROOT / "skills" / "agent-reach" / "SKILL_en.md",
     )
     for path in skills:
         text = path.read_text(encoding="utf-8")
@@ -229,7 +229,7 @@ def test_skill_routes_finance_and_documents_opencli_discovery():
         assert "opencli list" in text, path.relative_to(ROOT)
         assert "--help" in text, path.relative_to(ROOT)
 
-    finance = ROOT / "agent_reach" / "skill" / "references" / "finance.md"
+    finance = ROOT / "skills" / "agent-reach" / "references" / "finance.md"
     text = finance.read_text(encoding="utf-8")
     assert "opencli xueqiu stock" in text
     assert "agent-reach configure --from-browser chrome --platform xueqiu" in text

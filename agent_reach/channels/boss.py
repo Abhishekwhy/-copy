@@ -5,7 +5,7 @@
 （触发 code 36 风控），故 check() 只做四层只读探测，不实例化 BossClient、不拉起浏览器。
 
 抓取走 boss-agent-cli 公开 API（search_jobs + job_card_browser + browser_source="existing-browser"），
-调用姿势见 skill/references/career.md；check() 只负责「装没装 + CDP 链路就绪 +
+调用姿势见 skills/agent-reach/references/career.md；check() 只负责「装没装 + CDP 链路就绪 +
 浏览器内有无登录 cookie」的体检，不搜索。
 
 双登录态存储（体检必须区分，历史教训）。两者都是必需的，但认证的是不同通道：

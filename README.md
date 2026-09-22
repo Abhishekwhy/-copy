@@ -177,6 +177,37 @@ AI Agent 已经能帮你写代码、改文档、管项目——但你让它去�
 安装完之后，`agent-reach doctor` 一条命令告诉你每个渠道的状态、当前走哪条路。
 </details>
 
+<details>
+<summary>只想要 skill 文件？（npx 一行装）</summary>
+
+skill 包放在仓库根目录的 `skills/agent-reach/`，符合 `skills/<name>/SKILL.md` 约定，
+两种主流 skill 安装器都能直接拉：
+
+```bash
+# skills CLI（复数）——会 clone 仓库、自动装进各个 Agent 的 skills 目录
+npx skills add https://github.com/Panniantong/Agent-Reach.git
+
+# skill CLI（单数）——只下载文件到当前目录的 .codebuddy/skills/agent-reach/
+SKILL_BASE_URL=https://github.com/Panniantong/Agent-Reach/tree/main \
+  npx skill skills/agent-reach
+```
+
+> ⚠️ `npx skill add <git-url>` 这个写法不存在。单数的 `skill` CLI 没有 `add`
+> 子命令、也不接受 git URL，只收 `skills/<name>` 这种包名；接受 git URL 的是
+> **复数**的 `skills` CLI（`npx skills add <url>`）。
+>
+> ⚠️ 两条命令都**只拿 skill 文件**（SKILL.md + references/），
+> **不会安装 `agent-reach` 命令本身**。SKILL.md 里的 `agent-reach doctor`
+> 等命令仍然需要按上面的方式 `pip install`。想一步到位，还是用上面那句话让 Agent 装。
+
+装好 `agent-reach` 之后，把 skill 注册到所有已知 Agent 的 skills 目录用：
+
+```bash
+agent-reach skill --install
+```
+
+</details>
+
 ---
 
 ## 装好就能用

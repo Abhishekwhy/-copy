@@ -166,7 +166,22 @@ agent-reach install --env=auto
 
 ```bash
 npx skills add Panniantong/Agent-Reach@agent-reach
+# or point it at the repository directly
+npx skills add https://github.com/Panniantong/Agent-Reach.git
 ```
+
+The skill package lives at `skills/agent-reach/` in the repo root, following the
+`skills/<name>/SKILL.md` convention, so the singular [`skill`](https://www.npmjs.com/package/skill)
+CLI works too:
+
+```bash
+SKILL_BASE_URL=https://github.com/Panniantong/Agent-Reach/tree/main \
+  npx skill skills/agent-reach
+```
+
+> `npx skill add <git-url>` is not a thing: the singular `skill` CLI has no `add`
+> subcommand and takes a `skills/<name>` package name, not a git URL. The CLI that
+> accepts a git URL is the plural one, `npx skills add <url>`.
 
 After the Skill is installed, the Agent will auto-detect whether `agent-reach` CLI is available and install it if needed.
 

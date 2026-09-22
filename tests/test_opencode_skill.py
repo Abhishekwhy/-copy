@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import importlib.resources
 import os
 import re
 from pathlib import Path
@@ -12,15 +11,16 @@ from unittest.mock import patch
 import pytest
 import yaml
 
-from agent_reach.cli import _cmd_uninstall, _install_skill, _uninstall_skill
+from agent_reach.cli import (
+    _cmd_uninstall,
+    _install_skill,
+    _skill_source_dir,
+    _uninstall_skill,
+)
 
 
 def _frontmatter(resource_name: str) -> dict[str, object]:
-    text = (
-        importlib.resources.files("agent_reach")
-        .joinpath("skill", resource_name)
-        .read_text(encoding="utf-8")
-    )
+    text = _skill_source_dir().joinpath(resource_name).read_text(encoding="utf-8")
     match = re.match(r"\A---\n(.*?)\n---\n", text, flags=re.DOTALL)
     assert match is not None, f"{resource_name} must start with YAML frontmatter"
     return yaml.safe_load(match.group(1))

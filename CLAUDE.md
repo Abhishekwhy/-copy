@@ -21,7 +21,7 @@ Repo: github.com/Panniantong/Agent-Reach | License: MIT | Version: 1.5.0
 - `agent_reach/channels/` — One file per platform (twitter.py, reddit.py, youtube.py, etc.)
 - `agent_reach/channels/base.py` — Base channel class (all channels inherit from this)
 - `agent_reach/integrations/mcp_server.py` — MCP server integration
-- `agent_reach/skill/` — OpenClaw skill files
+- `skills/agent-reach/` — Skill package (SKILL.md + references/), shipped into wheels as `agent_reach/skill/`
 - `agent_reach/guides/` — Usage guides
 - `tests/` — pytest tests
 - `config/mcporter.json` — MCP tool config
